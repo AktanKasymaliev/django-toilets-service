@@ -2,7 +2,11 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
-
+from django.core.mail import EmailMultiAlternatives
+from decouple import config
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_text
+from .token import account_activation_token
 
 
 def send_confirmation_email(request, user):
@@ -12,17 +16,19 @@ def send_confirmation_email(request, user):
         "Please verify your email "
         "address to set up your account.",
         "email": user.email,
-        "domain":get_current_site(request)
-        # 'activation_code': user.activation_code
+        "domain":get_current_site(request).domain,
+        "uid":urlsafe_base64_encode(force_bytes(user.pk)),
+        "token":account_activation_token.make_token(user)
     }
-    msg_html = render_to_string("account/email.html", context)
-    plain_message = strip_tags(msg_html)
-    subject = "Account activation"
-    to_emails = user.email
-    mail.send_mail(
-        subject,
-        plain_message,
-        "akttan04@gmail.com",
-        [to_emails, ],
-        html_message=msg_html,
+    current_site = get_current_site(request)
+    mail_subject = 'Active your account'
+    to_email = user.email
+    message = render_to_string('account/email.html', context)
+    email = EmailMultiAlternatives(
+        mail_subject,
+        message,
+        from_email=config('EMAIL_HOST_USER'),
+        to = [user.email],
     )
+    email.content_subtype = 'html'
+    email.send(fail_silently=True)
