@@ -6,9 +6,15 @@ from django.core.files.storage import FileSystemStorage
 
 
 class ToiletAddressImageSerializer(serializers.ModelSerializer):
+    address_image = serializers.ImageField(use_url=True)
     class Meta:
         model = AddressImage
         fields = ('toilet','address_image',)
+
+    # def get_photo_url(self, queryset):
+    #     request = self.context.get('request')
+    #     photo_url = queryset.address_image.url
+    #     return request.build_absolute_uri(photo_url)
 
     def create(self, validated_data):
         toilet_name = validated_data.pop('toilet')
@@ -39,13 +45,11 @@ class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
 
 
 class ToiletsPointCreateSerializer(serializers.ModelSerializer):
-    address_image = ToiletAddressImageSerializer(many=True, required=False)
     class Meta:
         model = Entity
-        fields = ('address_image', 'address', 'longitude', 'latitude')
+        fields = ('address', 'longitude', 'latitude')
     
     def create(self, validated_data):
-        # address_images = validated_data.pop('address_image')
         request = self.context.get('request')
         toilet_ad = Entity.objects.create(username=request.user, **validated_data)
         return toilet_ad
@@ -55,7 +59,6 @@ class ToiletsPointCreateSerializer(serializers.ModelSerializer):
 class ToiletsPointDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
-        fields = ...
 
 class ToiletsPointUpdateSerializer(serializers.ModelSerializer):
     class Meta:
