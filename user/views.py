@@ -1,5 +1,5 @@
 from django.template.loader import render_to_string
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, TokenObtainPairSerializer
 from rest_framework import generics, viewsets, views, response, status
 from .send_mail import send_confirmation_email
 from rest_framework.renderers import JSONRenderer
@@ -10,6 +10,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_text
 from user.models import User
 from .token import account_activation_token
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 
 
@@ -40,4 +43,8 @@ def activate(request, uidb64, token):
         return response.Response('Your account activated')
     else:
         return response.Response('Error 404')
-    
+
+
+class TokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny,]
+    serializer_class = TokenObtainPairSerializer
