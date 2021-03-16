@@ -25,8 +25,8 @@ class ToiletsPointListSerialezer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['images'] =  instance.toilet.count() #ToiletAddressImageSerializer(instance.toilet.all(), many=True).data
+        representation['comments'] = instance.restroom.count()
         return representation                               # Сериализация фоток
-
 
 class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,7 +36,7 @@ class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['images'] = ToiletAddressImageSerializer(instance.toilet.all(), many=True).data
-        # representation['username'] = instance.username
+        representation['comments'] = ComentSerializer(instance.restroom.all(), many=True).data
         return representation   
 
 

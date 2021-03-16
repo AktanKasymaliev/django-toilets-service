@@ -31,10 +31,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #third apps
     'rest_framework',
+    'leaflet',
+    'djgeojson',
 
     #my_apps
     'api_side',
     'user',
+    'map',
 ]
 
 MIDDLEWARE = [
@@ -151,6 +154,13 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
+#PAGINATION
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
+
+
 #JWT SETTINGS
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -186,4 +196,13 @@ DEFAULTS = {
 SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     'ROTATE_REFRESH_TOKENS': True,
+}
+
+#SETTINGS FOR MAP GDA
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (42.8648935, 74.5818231),
+    'DEFAULT_ZOOM': 13,
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 18,
+    'DEFAULT_PRECISION': 6,
 }

@@ -20,7 +20,7 @@ class Entity(models.Model):
 
 class Comment(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    restroom = models.ForeignKey(Entity, on_delete=models.CASCADE)
+    restroom = models.ForeignKey(Entity, on_delete=models.CASCADE, related_name='restroom')
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
 
