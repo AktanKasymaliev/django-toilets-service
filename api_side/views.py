@@ -3,16 +3,19 @@ from rest_framework.response import Response
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import (IsAuthenticated,AllowAny)
 
+from .paginations import Pagination
 from .permissions import IsOwner, IsCommentOwnerOrPostAdmin
 from django.db.models import Q 
 from .models import Entity, AddressImage, Comment
 from .serializers import *
 
 
+
 class ToiletsPointListView(generics.ListAPIView):
     queryset = Entity.objects.all()
     serializer_class = ToiletsPointListSerialezer
     permission_classes = [AllowAny,]
+    pagination_class = Pagination
 
     def get_queryset(self):
         search_ = self.request.query_params.get('search')
@@ -50,6 +53,7 @@ class AddressImageView(viewsets.ModelViewSet):
     serializer_class = ToiletAddressImageSerializer
     queryset = AddressImage.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
+    pagination_class = Pagination
 
 
 
@@ -57,6 +61,7 @@ class CommentView(generics.ListAPIView):
     serializer_class = ComentSerializer
     queryset = Comment.objects.all()
     permission_classes = [IsAuthenticated,]
+    pagination_class = Pagination
 
 class CommentCreateView(generics.CreateAPIView):
     serializer_class = ComentCreateSerializer
