@@ -15,8 +15,11 @@ urlpatterns = [
     path('restroom/create/', ToiletsPointCreateView.as_view(), name='restroom_create'),
     path('restroom/delete/<int:pk>/', ToiletsPointDeleteView.as_view(), name='restroom_delete'),
     path('restroom/update/<int:pk>/', ToiletsPointUpdateView.as_view(), name='restroom_update'),
-    path('img/', include(router.urls)),
-
+    path('restroom/comments/', CommentView.as_view(), name='comment_list'),
+    path('restroom/comment/add/', CommentCreateView.as_view(), name='comment_add'),
+    path('restroom/comment/<int:pk>/', CommentCRUDView.as_view(), name='comment_crud')
+    # path('restroom/comment/edit/<int:pk>/', CommentView.as_view(), name='comment_list')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+urlpatterns += router.urls
 

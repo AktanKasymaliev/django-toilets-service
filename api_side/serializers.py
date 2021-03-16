@@ -1,5 +1,5 @@
 from rest_framework import serializers, fields
-from .models import Entity, AddressImage
+from .models import Entity, AddressImage, Comment
 from django.core.files.storage import FileSystemStorage
 
 
@@ -10,11 +10,6 @@ class ToiletAddressImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddressImage
         fields = ('toilet','address_image',)
-
-    # def get_photo_url(self, queryset):
-    #     request = self.context.get('request')
-    #     photo_url = queryset.address_image.url
-    #     return request.build_absolute_uri(photo_url)
 
     def create(self, validated_data):
         toilet_name = validated_data.pop('toilet')
@@ -41,6 +36,7 @@ class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['images'] = ToiletAddressImageSerializer(instance.toilet.all(), many=True).data
+        # representation['username'] = instance.username
         return representation   
 
 
@@ -64,3 +60,25 @@ class ToiletsPointUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
         fields = ('address', 'longitude', 'latitude')
+
+
+class ComentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('__all__')
+
+
+class ComentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('message', 'restroom')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        comment = Comment.objects.create(owner=request.user, **validated_data)
+        return comment
+
+class ComentCRUDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('__all__')
