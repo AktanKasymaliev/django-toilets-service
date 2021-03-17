@@ -4,38 +4,72 @@ from django.core.files.storage import FileSystemStorage
 
 
 
+# Image
+# -------------------------------------------------------------------------------------------------
+class AddressImageSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = AddressImage
+            fields = ('id','toilet', 'address_image')
 
-class ToiletAddressImageSerializer(serializers.ModelSerializer):
-    address_image = serializers.ImageField(use_url=True)
+        def to_representation(self, instance):
+            representation = super().to_representation(instance)
+            representation['toilet'] = instance.toilet.address
+            representation['region'] = instance.toilet.region
+            return representation
+
+
+class AddressImageCreateSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = AddressImage
+            fields = ('toilet', 'address_image')
+
+        def create(self, validated_data):
+            request = self.context.get('request')
+            toilet_id = validated_data.pop('toilet')
+            print(request.data)
+            rest = AddressImage.objects.create(toilet=toilet_id, address_image=request.data['address_images'])
+            return rest
+
+class AddressImageCRUDSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddressImage
-        fields = ('toilet','address_image',)
+        fields = ('toilet', 'address_image')
+        
 
-    def create(self, validated_data):
-        toilet_name = validated_data.pop('toilet')
-        toilet_ad = AddressImage.objects.create(toilet=toilet_name, **validated_data)
-        return toilet_ad
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        instance.toilet = validated_data.get('toilet', instance.toilet)
+        instance.address_image = request.data['address_images']
+        instance.save()
+        return instance
+        
+# -------------------------------------------------------------------------------------------------
 
-
+# Restroom points
+# -------------------------------------------------------------------------------------------------
 class ToiletsPointListSerialezer(serializers.ModelSerializer):
     class Meta:
         model = Entity
-        fields = ('id', 'username', 'address', 'longitude', 'latitude')
+        fields = ('id', 'username', 'region', 'address', 'longitude', 'latitude')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['images'] =  instance.toilet.count() #ToiletAddressImageSerializer(instance.toilet.all(), many=True).data
+        representation['username'] = instance.username.username
+        representation['region'] = instance.region
+        representation['images'] =  instance.toilet.count()
         representation['comments'] = instance.restroom.count()
-        return representation                               # Сериализация фоток
+        return representation
 
 class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
-        fields = ('id','username', 'address', 'longitude', 'latitude')
+        fields = ('id','username', 'region', 'address', 'longitude', 'latitude')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['images'] = ToiletAddressImageSerializer(instance.toilet.all(), many=True).data
+        representation['images'] = AddressImageSerializer(instance.toilet.all(), many=True).data
+        representation['region'] = instance.region
+        representation['username'] = instance.username.username
         representation['comments'] = ComentSerializer(instance.restroom.all(), many=True).data
         return representation   
 
@@ -43,13 +77,12 @@ class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
 class ToiletsPointCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
-        fields = ('address', 'longitude', 'latitude')
+        fields = ('address', 'region', 'longitude', 'latitude')
     
     def create(self, validated_data):
         request = self.context.get('request')
         toilet_ad = Entity.objects.create(username=request.user, **validated_data)
         return toilet_ad
-
 
 
 class ToiletsPointDeleteSerializer(serializers.ModelSerializer):
@@ -59,14 +92,23 @@ class ToiletsPointDeleteSerializer(serializers.ModelSerializer):
 class ToiletsPointUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
-        fields = ('address', 'longitude', 'latitude')
+        fields = ('address', 'region', 'longitude', 'latitude')
+# -------------------------------------------------------------------------------------------------
 
 
+# Comments 
+# -------------------------------------------------------------------------------------------------
 class ComentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('__all__')
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['owner'] = instance.owner.username
+        representation['region'] = instance.restroom.region
+        representation['restroom'] = instance.restroom.address
+        return representation
 
 class ComentCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -82,3 +124,4 @@ class ComentCRUDSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('__all__')
+# -------------------------------------------------------------------------------------------------
