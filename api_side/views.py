@@ -2,15 +2,18 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import (IsAuthenticated,AllowAny)
+from rest_framework.decorators import api_view
 
 from .paginations import Pagination
-from .permissions import IsOwner, IsCommentOwnerOrPostAdmin
+from .permissions import IsOwner, IsCommentOwnerOrPostAdmin, IsOwnerImage
 from django.db.models import Q 
 from .models import Entity, AddressImage, Comment
 from .serializers import *
 
 
 
+# Toilet points
+# -----------------------------------------------------
 class ToiletsPointListView(generics.ListAPIView):
     queryset = Entity.objects.all()
     serializer_class = ToiletsPointListSerialezer
@@ -48,15 +51,41 @@ class ToiletsPointUpdateView(generics.UpdateAPIView):
     queryset = Entity.objects.all()
     http_method_names = ['patch',]
     permission_classes = [IsAuthenticated, IsOwner]
+# ----------------------------------------------------------------
 
-class AddressImageView(viewsets.ModelViewSet):
-    serializer_class = ToiletAddressImageSerializer
+
+# Address image
+# -------------------------------------------------
+class AddressImageView(generics.ListAPIView):
+    serializer_class = AddressImageSerializer
     queryset = AddressImage.objects.all()
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwnerImage]
     pagination_class = Pagination
 
+class AddressImageCreateView(generics.CreateAPIView):
+    serializer_class = AddressImageCreateSerializer
+    permission_classes = [IsAuthenticated, IsOwnerImage]
+
+class AddressImageCRUDView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AddressImageCRUDSerializer
+    queryset = AddressImage.objects.all()
+    permission_classes = [IsAuthenticated,]
+
+    # def update(self, request, *args, **kwargs):
+    #     updating = super(AddressImageCRUDView, self).update(request, *args, **kwargs) 
+    #     updating.
+    #     return updating
+
+    def put(self, request, *args, **kwargs):
+        return Response('Put method not allowed')
+    
+    def get(self, request, *args, **kwargs):
+        return Response('Get method not allowed')
+# -------------------------------------------------------
 
 
+#Comments
+# ---------------------------------------------
 class CommentView(generics.ListAPIView):
     serializer_class = ComentSerializer
     queryset = Comment.objects.all()
@@ -74,3 +103,6 @@ class CommentCRUDView(generics.RetrieveUpdateDestroyAPIView):
 
     def get(self, request, *args, **kwargs):
         return Response('Get method not allowed')
+
+    
+#-----------------------------------------------------

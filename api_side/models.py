@@ -6,12 +6,13 @@ from user.models import User
 
 class Entity(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
+    region = models.CharField(max_length=155)
     address = models.CharField(max_length=355)
     longitude = models.DecimalField(verbose_name="Долгота",max_digits=9, decimal_places=6)
     latitude = models.DecimalField(verbose_name="Широта",max_digits=9, decimal_places=6)
 
     def __str__(self):
-        return f"{self.address}"
+        return f"{self.address} created by: {self.username.username}"
 
     class Meta:
         verbose_name = 'Уборная'
@@ -25,7 +26,7 @@ class Comment(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Comment by {self.owner} to {self.restroom}"
+        return f"Comment by {self.owner} to {self.restroom.address}"
 
     class Meta:
         verbose_name = 'Комментарий'

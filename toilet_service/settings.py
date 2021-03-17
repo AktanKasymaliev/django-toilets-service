@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'leaflet',
     'djgeojson',
+    'django_cleanup',
 
     #my_apps
     'api_side',
@@ -164,11 +165,13 @@ REST_FRAMEWORK = {
 #JWT SETTINGS
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
 }
+
 DEFAULTS = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60*24),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
