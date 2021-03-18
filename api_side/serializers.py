@@ -26,7 +26,6 @@ class AddressImageCreateSerializer(serializers.ModelSerializer):
         def create(self, validated_data):
             request = self.context.get('request')
             toilet_id = validated_data.pop('toilet')
-            print(request.data)
             rest = AddressImage.objects.create(toilet=toilet_id, address_image=request.data['address_images'])
             return rest
 
@@ -89,14 +88,23 @@ class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
 
 
 class ToiletsPointCreateSerializer(serializers.ModelSerializer):
+    address_image = AddressImageSerializer(many=True, required=False)
     class Meta:
         model = Entity
-        fields = ('address', 'region', 'longitude', 'latitude')
+        fields = ('address', 'region', 'longitude', 'latitude','address_image')
     
     def create(self, validated_data):
         request = self.context.get('request')
         toilet_ad = Entity.objects.create(username=request.user, **validated_data)
+        for image_data in request.data.pop('address_image'):
+            created = AddressImage.objects.create(address_image=image_data, toilet=toilet_ad)
+            toilet_ad.toilet.add(created)
         return toilet_ad
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['images'] = AddressImageSerializer(instance.toilet.all(), many=True).data
+        return representation   
 
 
 class ToiletsPointDeleteSerializer(serializers.ModelSerializer):
@@ -104,9 +112,30 @@ class ToiletsPointDeleteSerializer(serializers.ModelSerializer):
         model = Entity
 
 class ToiletsPointUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
+    address_image = AddressImageSerializer(many=True, required=False)
+    class Meta: 
         model = Entity
-        fields = ('address', 'region', 'longitude', 'latitude')
+        fields = ('address', 'region', 'longitude', 'latitude', 'address_image')
+
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        instance.address = validated_data.get('address', instance.address)
+        instance.region = validated_data.get('region', instance.region)
+        instance.longitude = validated_data.get('longitude', instance.longitude)
+        instance.latitude = validated_data.get('latitude', instance.latitude)
+        try:
+            images_data = request.data.pop('address_image')
+        except:
+            images_data = None
+
+        if images_data is not None:
+            for image_data in images_data:
+                image_created = AddressImage.objects.create(address_image=image_data, toilet=instance)
+                instance.toilet.add(image_created)
+
+        instance.save()
+        return instance
 # -------------------------------------------------------------------------------------------------
 
 

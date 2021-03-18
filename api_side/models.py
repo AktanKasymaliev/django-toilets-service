@@ -11,6 +11,7 @@ class Entity(models.Model):
     longitude = models.DecimalField(verbose_name="Долгота",max_digits=22, decimal_places=16)
     latitude = models.DecimalField(verbose_name="Широта",max_digits=22, decimal_places=16)
 
+
     def __str__(self):
         return f"{self.address} created by: {self.username.username}"
 
