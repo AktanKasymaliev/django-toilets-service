@@ -1,0 +1,20 @@
+{% extends 'map/index.html' %}
+
+{% block title %}New Point{% endblock %}
+
+{% block newitem %}
+<form>
+    <input class="form-control me-2" type="search" id="add" placeholder="Add new point" aria-label="Search">
+    <button class="btn btn-outline-success" id="search-btn" style="margin-top: 10px;">Save</button>
+</form>
+{% endblock %}
+
+{% block navbar %}
+<a class="navbar-brand" href="{% url 'serialize' %}">Home</a>
+{% endblock %}
+
+{% block content %}
+
+
+
+{% endblock %}

@@ -2,6 +2,7 @@
 <html>
   <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Restrooms</title>
     {% leaflet_js %}
     {% leaflet_css %}
@@ -10,22 +11,70 @@
     </style>
     <script>
       window.addEventListener("map:init", function (e) {
-        var detail = e.detail;
+        var markers = new L.FeatureGroup()
+        var detail = e.detail
+        var map = detail.map
         var actuals = JSON.parse('{{ ents | safe }}');
         actuals.forEach(element => {
-          L.marker([element.fields.longitude, element.fields.latitude]).addTo(detail.map);
-      }, false);
-        });
+          var marker = L.marker([element.fields.longitude, element.fields.latitude])
+          markers.addLayer(marker)
+        }, false);
+        map.addLayer(markers)
+        // Search functionality
+        var searchBtn = $('#search-btn')
+        var searchInput = $('#search-input')
+        var resetBtn= $('#reset')
+        var url = '/api/v1/restroom/list/?search='
+        var forResetUrl = '/api/v1/restrooms/'
+        resetBtn.click(function (e) {
+          e.preventDefault()
+          $.get(forResetUrl, function(data) {
+            var restroomsData = data
+            console.log(restroomsData)
+            restroomsData.forEach(element =>{
+              var resMarker = L.marker([element.longitude, element.latitude])
+              markers.addLayer(resMarker)
+            }, false)
+            map.addLayer(markers)
+          })
+        })
+        searchBtn.click(function (e) {
+          e.preventDefault()
+          var searchVal = searchInput.val()
+          var fullUrl = url + searchVal
+          $.get(fullUrl, function(data) {
+            var res = data?.results
+            if (res.length > 0) {
+              // Remove all markers
+              map.removeLayer(markers)
+              var newMarkers = new L.FeatureGroup()
+              res.forEach(function(element) {
+                // Put found markers to markers layer 
+                var foundMarker = L.marker([element.longitude, element.latitude])
+                newMarkers.addLayer(foundMarker)
+              })
+              // Put markers layer to map
+              map.addLayer(newMarkers)
+            }
+          })
+        })
+      });
     </script>
   </head>
   <body>
     <nav class="navbar navbar-light bg-light">
       <div class="container-fluid">
+        {% block newitem %}{% endblock %}
+
         <a class="navbar-brand" style="margin-left: 100px;"><strong>Kyrgyzstan restrooms</strong></a>
-        <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
+        {% block navbar %}
+        <a class="navbar-brand" href="{% url 'new_point' %}">Add new point</a>
+          <form class="d-flex">
+          <input class="form-control me-2" type="search" id="search-input" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" id="search-btn">Search</button>
+          <button class="btn btn-outline-success" id="reset" style="margin-left: 10px;">Reset</button>
         </form>
+        {% endblock %}
       </div>
     </nav>
     {% leaflet_map "main" %}

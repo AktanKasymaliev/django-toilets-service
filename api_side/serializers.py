@@ -47,6 +47,20 @@ class AddressImageCRUDSerializer(serializers.ModelSerializer):
 
 # Restroom points
 # -------------------------------------------------------------------------------------------------
+class RestroomsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entity
+        fields = ('id', 'username', 'region', 'address', 'longitude', 'latitude')
+    
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['username'] = instance.username.username
+        representation['region'] = instance.region
+        representation['images'] =  instance.toilet.count()
+        representation['comments'] = instance.restroom.count()
+        return representation
+
 class ToiletsPointListSerialezer(serializers.ModelSerializer):
     class Meta:
         model = Entity
