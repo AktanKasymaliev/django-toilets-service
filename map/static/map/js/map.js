@@ -68,6 +68,7 @@
             saveBtn.click(function (e) {
                 e.preventDefault()
                 var data = {address:address.val(), region:region.val(), latitude:lng.val(), longitude:lat.val()}
+                console.log(data)
                 $.post(
                     createUrl,
                     data,
