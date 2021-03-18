@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'leaflet',
     'djgeojson',
     'django_cleanup',
+    'rest_captcha',
 
     #my_apps
     'api_side',
@@ -168,13 +169,13 @@ REST_FRAMEWORK = {
 #JWT SETTINGS
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ],
 }
 
 DEFAULTS = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60*24),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=300),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -211,4 +212,28 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 3,
     'MAX_ZOOM': 18,
     'DEFAULT_PRECISION': 6,
+}
+
+
+#CAPTCHA SETTINGS:
+REST_CAPTCHA = {
+    'CAPTCHA_CACHE': 'default',
+    'CAPTCHA_TIMEOUT': 300,  # 5 minutes
+    'CAPTCHA_LENGTH': 4,
+    'CAPTCHA_FONT_SIZE': 22,
+    'CAPTCHA_IMAGE_SIZE': (90, 40),
+    'CAPTCHA_LETTER_ROTATION': (-35, 35),
+    'CAPTCHA_FOREGROUND_COLOR': '#001100',
+    'CAPTCHA_BACKGROUND_COLOR': '#ffffff',
+    # 'CAPTCHA_FONT_PATH': FONT_PATH,
+    'CAPTCHA_CACHE_KEY': 'rest_captcha_{key}.{version}',
+    'FILTER_FUNCTION': 'rest_captcha.captcha.filter_default',
+    'NOISE_FUNCTION': 'rest_captcha.captcha.noise_default'
+}
+CACHES={
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'rest-captcha',
+        'MAX_ENTRIES': 10000,
+    }
 }
