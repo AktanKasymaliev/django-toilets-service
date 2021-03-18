@@ -10,3 +10,10 @@ def serializing(request):
         'ents': serializers.serialize("json", Entity.objects.all())
     }
     return render(request, 'map/index.html', context)
+
+
+def new_point(request):
+    context = {
+        'entity':Entity.objects.all()
+    }
+    return render(request, 'map/new_point.html')

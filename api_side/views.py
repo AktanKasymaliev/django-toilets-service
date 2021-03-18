@@ -14,6 +14,12 @@ from .serializers import *
 
 # Toilet points
 # -----------------------------------------------------
+class RestroomsView(generics.ListAPIView):
+    queryset = Entity.objects.all()
+    serializer_class = RestroomsSerializer
+    permission_classes = [AllowAny, ]
+
+
 class ToiletsPointListView(generics.ListAPIView):
     queryset = Entity.objects.all()
     serializer_class = ToiletsPointListSerialezer
@@ -21,13 +27,18 @@ class ToiletsPointListView(generics.ListAPIView):
     pagination_class = Pagination
 
     def get_queryset(self):
+        filter_ = self.request.query_params.get('filter')
         search_ = self.request.query_params.get('search')
         my_queryset = super().get_queryset() 
         if search_:
             my_queryset = my_queryset.filter(address__icontains=search_)
             return my_queryset
+        elif filter_:
+            my_queryset = my_queryset.filter(region__icontains=filter_)
+            return my_queryset
         else:
             return my_queryset
+
 
 class ToiletsPointDetailView(generics.RetrieveAPIView):
     queryset = Entity.objects.all()
@@ -70,11 +81,6 @@ class AddressImageCRUDView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AddressImageCRUDSerializer
     queryset = AddressImage.objects.all()
     permission_classes = [IsAuthenticated,]
-
-    # def update(self, request, *args, **kwargs):
-    #     updating = super(AddressImageCRUDView, self).update(request, *args, **kwargs) 
-    #     updating.
-    #     return updating
 
     def put(self, request, *args, **kwargs):
         return Response('Put method not allowed')
