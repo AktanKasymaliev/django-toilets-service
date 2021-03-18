@@ -1,3 +1,4 @@
+{% load static %}
 {% load leaflet_tags %}
 <html>
   <head>
@@ -9,57 +10,15 @@
     <style>
       .leaflet-container { height: 100%; }
     </style>
+    {% block script %}
     <script>
-      window.addEventListener("map:init", function (e) {
-        var markers = new L.FeatureGroup()
-        var detail = e.detail
-        var map = detail.map
-        var actuals = JSON.parse('{{ ents | safe }}');
-        actuals.forEach(element => {
-          var marker = L.marker([element.fields.longitude, element.fields.latitude])
-          markers.addLayer(marker)
-        }, false);
-        map.addLayer(markers)
-        // Search functionality
-        var searchBtn = $('#search-btn')
-        var searchInput = $('#search-input')
-        var resetBtn= $('#reset')
-        var url = '/api/v1/restroom/list/?search='
-        var forResetUrl = '/api/v1/restrooms/'
-        resetBtn.click(function (e) {
-          e.preventDefault()
-          $.get(forResetUrl, function(data) {
-            var restroomsData = data
-            console.log(restroomsData)
-            restroomsData.forEach(element =>{
-              var resMarker = L.marker([element.longitude, element.latitude])
-              markers.addLayer(resMarker)
-            }, false)
-            map.addLayer(markers)
-          })
-        })
-        searchBtn.click(function (e) {
-          e.preventDefault()
-          var searchVal = searchInput.val()
-          var fullUrl = url + searchVal
-          $.get(fullUrl, function(data) {
-            var res = data?.results
-            if (res.length > 0) {
-              // Remove all markers
-              map.removeLayer(markers)
-              var newMarkers = new L.FeatureGroup()
-              res.forEach(function(element) {
-                // Put found markers to markers layer 
-                var foundMarker = L.marker([element.longitude, element.latitude])
-                newMarkers.addLayer(foundMarker)
-              })
-              // Put markers layer to map
-              map.addLayer(newMarkers)
-            }
-          })
-        })
-      });
+      var actuals = JSON.parse('{{ ents | safe }}');
+      var isAddPage = false
+      console.log(actuals)
     </script>
+
+    <script src="{% static 'map/js/map.js' %}"></script>
+    {% endblock %}
   </head>
   <body>
     <nav class="navbar navbar-light bg-light">

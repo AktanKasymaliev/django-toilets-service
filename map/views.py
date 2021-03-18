@@ -14,6 +14,7 @@ def serializing(request):
 
 def new_point(request):
     context = {
-        'entity':Entity.objects.all()
+        'entity':Entity.objects.all(),
+        'ents': serializers.serialize("json", Entity.objects.all())
     }
-    return render(request, 'map/new_point.html')
+    return render(request, 'map/new_point.html', context)

@@ -1,11 +1,26 @@
 {% extends 'map/index.html' %}
+{% load static %}
 
 {% block title %}New Point{% endblock %}
 
+
+{% block script %}
+<script>
+    var actuals = JSON.parse('{{ ents | safe }}');
+    var isAddPage = true
+</script>
+<script src="{% static 'map/js/map.js' %}"></script>
+{% endblock %}
+
+
+
 {% block newitem %}
 <form>
-    <input class="form-control me-2" type="search" id="add" placeholder="Add new point" aria-label="Search">
-    <button class="btn btn-outline-success" id="search-btn" style="margin-top: 10px;">Save</button>
+    <input class="form-control me-2" type="search" id="address" placeholder="Address" aria-label="Search">
+    <input class="form-control me-2" type="search" id="region" placeholder="Region" aria-label="Search">
+    <input class="form-control me-2" type="search" id="lat" placeholder="Latitude" aria-label="Search">
+    <input class="form-control me-2" type="search" id="lng" placeholder="Longitude" aria-label="Search">
+    <button class="btn btn-outline-success" id="save-btn" style="margin-top: 10px;">Save</button>
 </form>
 {% endblock %}
 

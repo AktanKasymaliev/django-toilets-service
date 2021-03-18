@@ -8,8 +8,8 @@ class Entity(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     region = models.CharField(max_length=155)
     address = models.CharField(max_length=355)
-    longitude = models.DecimalField(verbose_name="Долгота",max_digits=9, decimal_places=6)
-    latitude = models.DecimalField(verbose_name="Широта",max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(verbose_name="Долгота",max_digits=22, decimal_places=16)
+    latitude = models.DecimalField(verbose_name="Широта",max_digits=22, decimal_places=16)
 
     def __str__(self):
         return f"{self.address} created by: {self.username.username}"
