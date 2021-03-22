@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'api_side',
     'user',
     'map',
+    'account_auth',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +138,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_REDIRECT = 'map'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

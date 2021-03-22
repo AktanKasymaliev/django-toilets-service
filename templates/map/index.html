@@ -26,7 +26,9 @@
 
         <a class="navbar-brand" style="margin-left: 100px;"><strong>Kyrgyzstan restrooms</strong></a>
         {% block navbar %}
+        {% if user.is_authenticated %}
         <a class="navbar-brand" href="{% url 'new_point' %}">Add new point</a>
+        {% endif %}
           <form class="d-flex">
           <input class="form-control me-2" type="search" id="search-input" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" id="search-btn">Search</button>

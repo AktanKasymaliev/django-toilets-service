@@ -6,6 +6,7 @@ from django.core import serializers
 
 def serializing(request):
     context = {
+        'user':request.user,
         'queryset':Entity.objects.all(),
         'ents': serializers.serialize("json", Entity.objects.all())
     }
