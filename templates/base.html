@@ -11,7 +11,9 @@
   <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" style="margin-left: 100px;"><strong>Kyrgyzstan restrooms</strong></a>
+      {% if user.is_authenticated %}
       <a class="navbar-brand" href="{% url 'new_point' %}" style="margin-right: 700px;">Add new point</a>
+      {% endif %}
       <form class="d-flex">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
