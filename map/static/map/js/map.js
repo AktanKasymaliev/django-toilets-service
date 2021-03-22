@@ -6,7 +6,6 @@
         // Actuals should be declared as a global var
         actuals.forEach(element => {
           var marker = L.marker([element.fields.longitude, element.fields.latitude])
-          console.log(element.fields)
           markers.addLayer(marker)
         }, false);
         map.addLayer(markers)
@@ -68,7 +67,6 @@
             saveBtn.click(function (e) {
                 e.preventDefault()
                 var data = {address:address.val(), region:region.val(), latitude:lng.val(), longitude:lat.val()}
-                console.log(data)
                 $.post(
                     createUrl,
                     data,

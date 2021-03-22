@@ -138,7 +138,9 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOGIN_REDIRECT = 'map'
+LOGIN_REDIRECT_URL = 'serialize'
+LOGOUT_REDIRECT_URL = 'serialize'
+LOGIN_URL = 'login'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Signing Up
+{% endblock %}
+
+{% block link %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'map/js/register.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<div class='container'>
+    <h1 class="text-center logo my-4">
+        <a href="{% url 'serialize' %}" style="color: white;">Main page</a>
+    </h1>
+<div class='row justify-content-center'>
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title" style="text-align: center;">Sign Up</h3>
+                <form method="post" class="post-form">
+                    {% csrf_token %}
+                    {{ form_s.as_p }}
+                    <!-- <input type="text" id='username'> -->
+                    <button class='btn btn-primary btn-block' id='create'>Create account</button>
+                </form>
+            </div>
+            <div class="card-footer text-muted text-center">
+                Already have an account? <a href="{% url 'login'%}">Lets Log In!!!</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
