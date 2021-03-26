@@ -14,7 +14,6 @@
                 email.val('')
                 password.val('')
                 password2.val('')
-                console.log('OK')
             })
         })
     })
