@@ -16,7 +16,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['kyrgyzstantoilets.ga', 'www.kyrgyzstantoilets.ga']
 AUTH_USER_MODEL = 'user.User'
 
 
@@ -146,9 +146,9 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    '/var/www/static/',
+    os.path.join(BASE_DIR / "map/static"),
 ]
 
 MEDIA_URL = '/media/'
