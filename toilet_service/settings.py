@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'rest_captcha',
 
+
     #my_apps
     'api_side',
     'user',
@@ -237,10 +238,11 @@ REST_CAPTCHA = {
     'FILTER_FUNCTION': 'rest_captcha.captcha.filter_default',
     'NOISE_FUNCTION': 'rest_captcha.captcha.noise_default'
 }
-CACHES={
+CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'rest-captcha',
         'MAX_ENTRIES': 10000,
     }
 }
+

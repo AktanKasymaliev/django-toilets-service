@@ -12,9 +12,10 @@
     </style>
     {% block script %}
     <script>
-      var actuals = JSON.parse('{{ ents | safe }}');
+      var actuals = JSON.parse("{{ ent | safe }}");
       var isAddPage = false
     </script>
+
     <script src="{% static 'map/js/map.js' %}"></script>
     {% endblock %}
   </head>

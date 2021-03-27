@@ -3,37 +3,36 @@ from .models import Entity, AddressImage, Comment
 from django.core.files.storage import FileSystemStorage
 
 
-
 # Image
 # -------------------------------------------------------------------------------------------------
 class AddressImageSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = AddressImage
-            fields = ('id','toilet', 'address_image')
+    class Meta:
+        model = AddressImage
+        fields = ('id', 'toilet', 'address_image')
 
-        def to_representation(self, instance):
-            representation = super().to_representation(instance)
-            representation['toilet'] = instance.toilet.address
-            representation['region'] = instance.toilet.region
-            return representation
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['toilet'] = instance.toilet.address
+        representation['region'] = instance.toilet.region
+        return representation
 
 
 class AddressImageCreateSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = AddressImage
-            fields = ('toilet', 'address_image')
+    class Meta:
+        model = AddressImage
+        fields = ('toilet', 'address_image')
 
-        def create(self, validated_data):
-            request = self.context.get('request')
-            toilet_id = validated_data.pop('toilet')
-            rest = AddressImage.objects.create(toilet=toilet_id, address_image=request.data['address_images'])
-            return rest
+    def create(self, validated_data):
+        request = self.context.get('request')
+        toilet_id = validated_data.pop('toilet')
+        rest = AddressImage.objects.create(toilet=toilet_id, address_image=request.data['address_images'])
+        return rest
+
 
 class AddressImageCRUDSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddressImage
         fields = ('toilet', 'address_image')
-        
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
@@ -41,7 +40,8 @@ class AddressImageCRUDSerializer(serializers.ModelSerializer):
         instance.address_image = request.data['address_images']
         instance.save()
         return instance
-        
+
+
 # -------------------------------------------------------------------------------------------------
 
 # Restroom points
@@ -50,15 +50,18 @@ class RestroomsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
         fields = ('id', 'username', 'region', 'address', 'longitude', 'latitude')
-    
-    
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['username'] = instance.username.username
-        representation['region'] = instance.region
-        representation['images'] =  instance.toilet.count()
-        representation['comments'] = instance.restroom.count()
-        return representation
+        if instance.has_published is not False:
+            representation['username'] = instance.username.username
+            representation['region'] = instance.region
+            representation['images'] = instance.toilet.count()
+            representation['comments'] = instance.restroom.count()
+            return representation
+        else:
+            return "This post didn't verify by moderator"
+
 
 class ToiletsPointListSerialezer(serializers.ModelSerializer):
     class Meta:
@@ -67,16 +70,20 @@ class ToiletsPointListSerialezer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['username'] = instance.username.username
-        representation['region'] = instance.region
-        representation['images'] =  instance.toilet.count()
-        representation['comments'] = instance.restroom.count()
-        return representation
+        if instance.has_published is not False:
+            representation['username'] = instance.username.username
+            representation['region'] = instance.region
+            representation['images'] = instance.toilet.count()
+            representation['comments'] = instance.restroom.count()
+            return representation
+        else:
+            return "This post didn't verify by moderator"
+
 
 class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
-        fields = ('id','username', 'region', 'address', 'longitude', 'latitude')
+        fields = ('id', 'username', 'region', 'address', 'longitude', 'latitude')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -84,18 +91,19 @@ class ToiletsPointsDetailSerializer(serializers.ModelSerializer):
         representation['region'] = instance.region
         representation['username'] = instance.username.username
         representation['comments'] = ComentSerializer(instance.restroom.all(), many=True).data
-        return representation   
+        return representation
 
 
 class ToiletsPointCreateSerializer(serializers.ModelSerializer):
     address_image = AddressImageSerializer(many=True, required=False)
+
     class Meta:
         model = Entity
-        fields = ('address', 'region', 'longitude', 'latitude','address_image')
-    
+        fields = ('address', 'region', 'longitude', 'latitude', 'address_image')
+
     def create(self, validated_data):
         request = self.context.get('request')
-        toilet_ad = Entity.objects.create(username=request.user, **validated_data)
+        toilet_ad = Entity.objects.create(username=request.user, has_published=False, **validated_data)
         try:
             if request.data['address_image'] is not None:
                 for image_data in request.data.pop('address_image'):
@@ -111,19 +119,20 @@ class ToiletsPointCreateSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['id'] = instance.id
         representation['images'] = AddressImageSerializer(instance.toilet.all(), many=True).data
-        return representation   
+        return representation
 
 
 class ToiletsPointDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entity
 
+
 class ToiletsPointUpdateSerializer(serializers.ModelSerializer):
     address_image = AddressImageSerializer(many=True, required=False)
-    class Meta: 
+
+    class Meta:
         model = Entity
         fields = ('address', 'region', 'longitude', 'latitude', 'address_image')
-
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
@@ -151,8 +160,8 @@ class ToiletsPointUpdateSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['images'] = AddressImageSerializer(instance.toilet.all(), many=True).data
-        return representation   
-# -------------------------------------------------------------------------------------------------
+        return representation
+    # -------------------------------------------------------------------------------------------------
 
 
 # Comments 
@@ -169,6 +178,7 @@ class ComentSerializer(serializers.ModelSerializer):
         representation['restroom'] = instance.restroom.address
         return representation
 
+
 class ComentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -178,6 +188,7 @@ class ComentCreateSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         comment = Comment.objects.create(owner=request.user, **validated_data)
         return comment
+
 
 class ComentCRUDSerializer(serializers.ModelSerializer):
     class Meta:

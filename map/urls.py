@@ -1,10 +1,9 @@
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-from .views import serializing, new_point
+from django.urls import path
+from .views import serializing, new_point, validating
 
 
 urlpatterns = [
     path('', serializing, name='serialize'),
     path('new_point/', new_point, name='new_point'),
+    path('validating/', validating, name='validating'),
 ]

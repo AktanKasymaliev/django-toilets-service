@@ -15,17 +15,20 @@
         var resetBtn= $('#reset')
         var url = '/api/v1/restroom/list/?search='
         var forResetUrl = '/api/v1/restrooms/'
+        var forResetUrl2 = '/api/v1/restroom/list/'
         resetBtn.click(function (e) {
           e.preventDefault()
           $.get(forResetUrl, function(data) {
             var restroomsData = data
             restroomsData.forEach(element =>{
+            if (element !== "This post didn't verify by moderator") {
               var resMarker = L.marker([element.longitude, element.latitude])
-              markers.addLayer(resMarker)
+              markers.addLayer(resMarker)}
             }, false)
             map.addLayer(markers)
           })
         })
+
 
         function clearMapAndAddMarkers (map, mrkrs, data) {
             map.removeLayer(mrkrs)
@@ -48,6 +51,8 @@
             var res = data?.results
             if (res.length > 0) {
               markers = clearMapAndAddMarkers(map, markers, res)
+            } else if (res.length === 0) {
+            alert("Sorry, but so restroom didn't find")
             }
           })
         })
@@ -75,7 +80,7 @@
                         lat.val('')
                         address.val('')
                         region.val('')
-                        $.get(forResetUrl, function(data) {
+                        $.get(forResetUrl2, function(data) {
                             if (data?.length > 0) {
                               markers = clearMapAndAddMarkers(map, markers, data)
                             }
