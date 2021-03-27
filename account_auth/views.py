@@ -3,7 +3,6 @@ from .forms import SignUpForm
 from django.contrib.auth import login as auth_login
 
 
-
 def signup(request):
     if request.method == 'POST':
         form_s = SignUpForm(request.POST)
@@ -15,4 +14,4 @@ def signup(request):
             return redirect('serialize')
     else:
         form_s = SignUpForm()
-    return render(request, 'account/signup.html', context={'form_s':form_s})
+    return render(request, 'account/signup.html', context={'form_s': form_s})
