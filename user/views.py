@@ -26,6 +26,7 @@ def register(request):
     user.is_active = False
     user.save()
     send_confirmation_email(request, user)
+    print("ВСЕ ПРОШЛО УСПЕШНО APISIDE")
     return response.Response('Email was send for confirmation',
                             status=status.HTTP_200_OK)
 

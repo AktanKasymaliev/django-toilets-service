@@ -6,7 +6,6 @@ Signing Up
 {% endblock %}
 
 {% block link %}
-<meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{% static 'map/js/register.js' %}"></script>
 {% endblock %}
@@ -24,7 +23,6 @@ Signing Up
                 <form method="post" class="post-form">
                     {% csrf_token %}
                     {{ form_s.as_p }}
-                    <!-- <input type="text" id='username'> -->
                     <button class='btn btn-primary btn-block' id='create'>Create account</button>
                 </form>
             </div>

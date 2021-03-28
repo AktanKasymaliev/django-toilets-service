@@ -32,3 +32,4 @@ def send_confirmation_email(request, user):
     )
     email.content_subtype = 'html'
     email.send(fail_silently=True)
+    print("ВСЕ ПРОШЛО УСПЕШНО EMAIL SENT")
