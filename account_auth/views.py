@@ -12,6 +12,7 @@ def signup(request):
             user.save()
             auth_login(request, user)
             return redirect('serialize')
+        print("ВСЕ ПРОШЛО УСПЕШНО")
     else:
         form_s = SignUpForm()
     return render(request, 'account/signup.html', context={'form_s': form_s})

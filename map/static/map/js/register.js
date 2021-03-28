@@ -10,9 +10,7 @@
             var password2 = $('#id_password2')
             var register = '/user/register/'
             var reg = {username:userName.val(), email:email.val(), password:password.val()}
-            $.post(register, reg, headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              }, function (d) {
+            $.post(register, reg, function (d) {
                 userName.val('')
                 email.val('')
                 password.val('')
@@ -30,5 +28,5 @@
             })
             })
         })
-    })
+
 }) ()
