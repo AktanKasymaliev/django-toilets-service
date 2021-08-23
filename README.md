@@ -3,7 +3,7 @@ Toilet adding and search in Bishkek
 Hello, in the first, you sould clone rep:
 * cloning repository:
 ```
-git clone https://github.com/AktanKasymaliev/hacker_news.git
+git clone https://github.com/AktanKasymaliev/toilet_service.git
 ```
 * Install GDAL package:
 ```
